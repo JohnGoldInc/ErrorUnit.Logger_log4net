@@ -9,7 +9,8 @@ http://johngoldinc.com/Help/html/T_ErrorUnit_Interfaces_ILogger.htm
 Partially complete, can log errors but can not read them, GetErrorUnitJson does not work yet, as no Appenders are loaded.
 
 Here is the Log file, not seeing an issue:
-  `devenv.exe Information: 0 : Test Logger_log4net message.
+~~~~
+  devenv.exe Information: 0 : Test Logger_log4net message.
   log4net: configuring repository [log4net-default-repository] using .config file section
   log4net: Application config file is [F:\Documents\Visual Studio 2015\Projects\WebApplication1\WebApplication1.Tests\obj\Release]
   log4net: Configuring Repository [log4net-default-repository]
@@ -87,4 +88,5 @@ Here is the Log file, not seeing an issue:
   log4net: Setting Collection Property [AddParameter] to object [log4net.Appender.AdoNetAppenderParameter]
   log4net: Created Appender [AdoNetAppender]
   log4net: Adding appender named [AdoNetAppender] to logger [root].
-  log4net: Hierarchy Threshold []`
+  log4net: Hierarchy Threshold []
+~~~~
