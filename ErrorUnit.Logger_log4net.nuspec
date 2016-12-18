@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ErrorUnit.Logger_log4net</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>johngoldinc</authors>
+    <owners>johngoldinc</owners>
+    <projectUrl>http://JohnGoldInc.com</projectUrl>
+    <iconUrl>http://johngoldinc.com/img/ErrorUnitLargeLogo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This enables compatibility between ErrorUnit and log4net</description>
+    <releaseNotes>Version 1.0.0</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>ErrorUnit log4net logging log error</tags>
+  </metadata>
+</package>
