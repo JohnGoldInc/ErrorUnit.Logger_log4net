@@ -6,7 +6,7 @@ For write compatability your "Message" column in your "Log" table should allow f
 
 http://johngoldinc.com/Help/html/T_ErrorUnit_Interfaces_ILogger.htm
 
-Partially complete, can log errors but can not read them, GetErrorUnitJson does not work yet, as no Appenders are loaded.
+Partially complete, can log errors but can not read them, GetErrorUnitJson does not work yet, as no Appenders are enumerated in ErrorUnitLogger.cs line 37 `Parallel.ForEach(log4net_Logger.Appenders.Cast<log4net.Appender.IAppender>(), appender =>`
 
 Here is the Log file, not seeing an issue:
 ~~~~
