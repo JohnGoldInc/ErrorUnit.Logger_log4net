@@ -6,7 +6,7 @@
     <title>$title$</title>
     <authors>johngoldinc</authors>
     <owners>johngoldinc</owners>
-    <projectUrl>http://JohnGoldInc.com</projectUrl>
+    <projectUrl>https://github.com/JohnGoldInc/ErrorUnit.Logger_log4net</projectUrl>
     <iconUrl>http://johngoldinc.com/img/ErrorUnitLargeLogo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This enables compatibility between ErrorUnit and log4net</description>
