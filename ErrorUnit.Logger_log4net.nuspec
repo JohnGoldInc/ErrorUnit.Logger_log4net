@@ -10,8 +10,8 @@
     <iconUrl>http://johngoldinc.com/img/ErrorUnitLargeLogo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This enables compatibility between ErrorUnit and log4net</description>
-    <releaseNotes>Version 1.0.0</releaseNotes>
-    <copyright>Copyright 2016</copyright>
+    <releaseNotes>$version$</releaseNotes>
+    <copyright>Copyright 2017</copyright>
     <tags>ErrorUnit log4net logging log error</tags>
   </metadata>
 </package>

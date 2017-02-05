@@ -25,15 +25,20 @@ namespace ErrorUnit.Logger_log4net
             log4net.Util.LogLog.InternalDebugging = true; //todo remove
             System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.TextWriterTraceListener(@"f:\Temp\Logger_log4net.log", "myListener"));
             System.Diagnostics.Trace.AutoFlush = true;
-            System.Diagnostics.Trace.TraceInformation("Test Logger_log4net message.");
+
 
             var config = log4net.Config.XmlConfigurator.Configure();
             log = LogManager.GetLogger(typeof(ErrorUnitLogger));
-
+            System.Diagnostics.Trace.TraceInformation("Test Logger_log4net message.");
             // Parallel.ForEach(logs, log => {
             var log4net_Logger = log.Logger as log4net.Repository.Hierarchy.Logger;
+
+            while (log4net_Logger != null && log4net_Logger.Appenders.Count == 0)
+                log4net_Logger = log4net_Logger.Parent;
+
             if (log4net_Logger != null)
             {
+
                 Parallel.ForEach(log4net_Logger.Appenders.Cast<log4net.Appender.IAppender>(), appender =>
                 {
                     if (appender is log4net.Appender.AdoNetAppender)
@@ -44,17 +49,17 @@ namespace ErrorUnit.Logger_log4net
                         var regexInsertStatment = new Regex(@"[Ii][Nn][Ss][Ee][Rr][Tt]\s+[Ii][Nn][Tt][Oo]\s+([^\(]+)\s+\(([^\)]+)\)\s+[Vv][Aa][Ll][Uu][Ee][Ss]\s+\(([^\)]+)\)")
                                          .Match(adoNetAppender.CommandText);
 
-                        if (regexInsertStatment.Groups.Count == 3)
+                        if (regexInsertStatment.Groups.Count == 4)
                         {
-                            var tableName = regexInsertStatment.Groups[0].Value;
-                            var columnNames = regexInsertStatment.Groups[1].Value
+                            var tableName = regexInsertStatment.Groups[1].Value;
+                            var columnNames = regexInsertStatment.Groups[2].Value
                                                                       .Split(',').Select(s => s.Trim())
                                                                       .ToList();
-                            var parameterNames = regexInsertStatment.Groups[2].Value
+                            var parameterNames = regexInsertStatment.Groups[3].Value
                                                                          .Split(',').Select(s => s.Trim())
                                                                          .ToList();
 
-                            var m_parameters = ((ArrayList)type.GetField("m_parameters", System.Reflection.BindingFlags.NonPublic)
+                            var m_parameters = ((ArrayList)type.GetField("m_parameters", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                                                                     .GetValue(adoNetAppender))
                                                                     .Cast<AdoNetAppenderParameter>()
                                                                     .ToList();
@@ -66,19 +71,24 @@ namespace ErrorUnit.Logger_log4net
                                                                                    || p.Layout is log4net.Layout.RawTimeStampLayout
                                                                                    || p.Layout is log4net.Layout.RawUtcTimeStampLayout
                                                                                    );
+                            AdoNetAppenderParameter messageParameter = null;
+                            try
+                            {
+                                var m_layout = typeof(log4net.Layout.Layout2RawLayoutAdapter).GetField("m_layout", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                                messageParameter = m_parameters.FirstOrDefault(p => p.Layout is log4net.Layout.Layout2RawLayoutAdapter
+                                                                                 && (m_layout.GetValue(p.Layout) as log4net.Layout.PatternLayout)?.ConversionPattern == "%message");
+                            }
+                            catch { }
 
-                            var messageParameter = m_parameters.FirstOrDefault(p => p.Layout is log4net.Layout.PatternLayout
-                                                                                      && ((log4net.Layout.PatternLayout)p.Layout)?.ConversionPattern == "%message"
-                                                                                      );
                             if (dateParameter != null && messageParameter != null)
                             {
                                 var dateField = columnNames[parameterNames.IndexOf(dateParameter.ParameterName)];
                                 var messageField = columnNames[parameterNames.IndexOf(messageParameter.ParameterName)];
 
                                     //open the connection object for us by sending an empty list of events to log
-                                    type.GetMethod("SendBuffer", System.Reflection.BindingFlags.NonPublic, null, new Type[] { typeof(log4net.Core.LoggingEvent[]) }, null)
-                                                                 .Invoke(adoNetAppender, new object[] { new log4net.Core.LoggingEvent[] { } });
-                                var connection = (IDbConnection)type.GetProperty("Connection", System.Reflection.BindingFlags.NonPublic)
+                                    type.GetMethod("SendBuffer", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance, null, new Type[] { typeof(log4net.Core.LoggingEvent[]) }, null)
+                                                                     .Invoke(adoNetAppender, new object[] { new log4net.Core.LoggingEvent[] { } });
+                                var connection = (IDbConnection)type.GetProperty("Connection", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                                                                        .GetValue(adoNetAppender, null);
 
                                 using (IDbCommand dbCmd = connection.CreateCommand())
